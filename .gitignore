@@ -1,0 +1,8 @@
+#[temporary files]
+.*~
+*.pyc
+
+#[project ide files]
+.project
+.pydevproject
+

@@ -1,0 +1,65 @@
+{
+    "default" : {
+        "host" : "http://headers.jsontest.com",
+        "method" : "GET"
+    },
+    "steps" : [
+        {
+            "construct" : "TEST",
+            "sid" : "FetchHeaders",
+            "input" : {
+            },
+            "output" : {
+                "params" : [
+                    {
+                        "check" : "EXACT",
+                        "name" : "Host",
+                        "expected" : "headers.jsontest.com"
+                    }
+                ]
+            } 
+        },
+        {
+            "construct" : "START_LOOP",
+            "count" : 2
+        },
+        {
+            "construct" : "START_SESSION"
+        },
+        {
+            "construct" : "TEST",
+            "sid" : "FindIP",
+            "host" : "http://ip.jsontest.com",
+            "input" : {
+            },
+            "output" : {
+                "params" : [
+                    {
+                        "check" : "PRESENT",
+                        "name" : "ip"
+                    }
+                ]
+            } 
+        },
+        {
+            "construct" : "TEST",
+            "sid" : "EchoIP",
+            "host" : "http://echo.jsontest.com/ip/$OUT[FindIP][ip]",
+            "output" : {
+                "params" : [
+                    {
+                        "check" : "EXACT",
+                        "name" : "ip",
+                        "expected" : "$OUT[FindIP][ip]"
+                    }
+                ]
+            } 
+        },
+        {
+            "construct" : "END_SESSION"
+        },
+        {
+            "construct" : "END_LOOP"
+        }
+    ]
+}
