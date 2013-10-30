@@ -1,0 +1,23 @@
+{
+    "steps" : [
+        {
+            "construct" : "TEST",
+            "sid" : "Echo",
+            "host" : "http://echo.jsontest.com/key/value/one/two",
+            "output" : {
+                "params" : [
+                    {
+                        "check" : "EXACT",
+                        "name" : "key",
+                        "expected" : "value"
+                    },
+                    {
+                        "check" : "EXACT",
+                        "name" : "one",
+                        "expected" : "two"
+                    }
+                ]
+            } 
+        }
+    ]
+}
