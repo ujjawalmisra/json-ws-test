@@ -61,9 +61,10 @@ class Tester:
         
     def run(self):
         Tester.__LOGGER.info("in run")
-        if None == self.__config['steps']:
+        if not 'steps' in self.__config:
+            Tester.__LOGGER.info("no test steps to execute")
             return
-        default = self.__config['default']
+        default = DictUtils.defaultIfNone(self.__config, None, 'default')
         control = {'loop':{'running': False, 'count': 0, 'steps': []}, 
                    'session':{'running': False, 'steps': {}},
                    'result':{'total':{'count':0, 'time':0},
