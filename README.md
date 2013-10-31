@@ -93,6 +93,7 @@ You will also see a beautiful Summary in a tabular form for immediate use:
 2013-10-30 18:19:47,783 - INFO     - Tester     - ================================
 ```
 
+The *summary* defines how many times was each test-case executed and how many times did it pass or fail. It also specifies the average time (ms) taken for these outcomes, i.e. total (or overall), passed and failed.
 
 ## The Language Elements
 
