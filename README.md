@@ -67,7 +67,16 @@ python src/Tester.py sample/single.test.json
 
 Try it now!
 
-You will see a beautiful summary of the test-case execution in the logs generated on your terminal:
+You will see a JSON version of this Summary of the test-case execution in the logs generated on your terminal:
+
+```
+2013-10-30 18:19:47,781 - INFO     - Tester     - ================================
+2013-10-30 18:19:47,781 - INFO     - Tester     - [SUMMARY JSON]
+2013-10-30 18:19:47,781 - INFO     - Tester     - {'failed': {'count': 0, 'time': 0}, 'total': {'count': 1, 'time': 0.565485954284668}, 'steps': {'Echo': {'failed': {'count': 0, 'time': 0}, 'total': {'count': 1, 'time': 0.565485954284668}, 'passed': {'count': 1, 'time': 0.565485954284668}}}, 'passed': {'count': 1, 'time': 0.565485954284668}}
+2013-10-30 18:19:47,781 - INFO     - Tester     - ================================
+```
+
+You will also see a beautiful Summary in a tabular form for immediate use:
 
 ```
 2013-10-30 18:19:47,781 - INFO     - Tester     - ================================
@@ -84,11 +93,31 @@ You will see a beautiful summary of the test-case execution in the logs generate
 2013-10-30 18:19:47,783 - INFO     - Tester     - ================================
 ```
 
-You will also find (just above this SUMMARY section) a JSON version of this summary:
 
-```
-2013-10-30 18:19:47,781 - INFO     - Tester     - ================================
-2013-10-30 18:19:47,781 - INFO     - Tester     - [SUMMARY JSON]
-2013-10-30 18:19:47,781 - INFO     - Tester     - {'failed': {'count': 0, 'time': 0}, 'total': {'count': 1, 'time': 0.565485954284668}, 'steps': {'Echo': {'failed': {'count': 0, 'time': 0}, 'total': {'count': 1, 'time': 0.565485954284668}, 'passed': {'count': 1, 'time': 0.565485954284668}}}, 'passed': {'count': 1, 'time': 0.565485954284668}}
-2013-10-30 18:19:47,781 - INFO     - Tester     - ================================
-```
+## The Language
+
+### Constructs
+
+#### TEST
+
+#### START_LOOP
+
+#### END_LOOP
+
+#### START_SESSION
+
+#### END_SESSION
+
+#### Input/Output
+
+### Default
+
+### Steps
+
+### Checks
+
+#### PRESENT
+
+#### EXACT
+
+
