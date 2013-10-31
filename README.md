@@ -94,30 +94,91 @@ You will also see a beautiful Summary in a tabular form for immediate use:
 ```
 
 
-## The Language
+## The Language Elements
 
-### Constructs
+Lets know do a walkthrough of the elements of the test-case definition language of this framework. All the elements are defined in JSON format.
 
-#### TEST
+### steps
 
-#### START_LOOP
+The **steps** element is a JSON array that defines the order in which individual test-cases need to be executed. For example, in the following test-case JSON:
 
-#### END_LOOP
+```js
+{
+    "steps" : [
+        {
+            "construct" : "TEST",
+            "sid" : "Test-Case-1",
+            ...
+        },
+        {
+            "construct" : "TEST",
+            "sid" : "Test-Case-2",
+            ...
+        },
+        ...
+        {
+            "construct" : "TEST",
+            "sid" : "Test-Case-k",
+            ...
+        }
+    ]
+}
+```
 
-#### START_SESSION
+the test-cases will be executed in the specified order - Test-Case-1 followed by Test-Case-2 and so on uptil Test-Case-k.
 
-#### END_SESSION
+### construct
+
+The **construct** element is used to define a step in the execution of a flow to be tested.
+
+#### [construct] TEST
+
+The **TEST construct** is the actual evaluation or processing step that leads to a web-service being called. For example, in the following test-case JSON:
+
+```js
+{
+    "steps" : [
+        {
+            "construct" : "TEST",
+            "sid" : "Echo",
+            "host" : "http://echo.jsontest.com",
+            "path" : "/key/value/one/two",
+            "method" : "GET",
+            "input" : {
+                ...
+            }, 
+            "output" : {
+                ...
+            } 
+        }
+    ]
+}
+```
+
+* "construct" : "TEST" -- [required] -- specifies the construct type.
+* "sid" : "Echo" -- specifies the step-id. This is of particular importance as we will see in case of *construct START_SESSION and END_SESSION*.
+* "host" : "http://echo.jsontest.com" -- [required] -- specifies the web-service to be hit.
+* "path" : "/key/value/one/two" -- [optional, default is ""] -- specifies the path to be appended to the *host*. Alternatively, the *host* may be fully qualified with the path (eg. "host" : "http://echo.jsontest.com/key/value/one/two") in which case this attribute may be omitted.
+* "method" : "GET" -- [optional, default is "GET"] -- specifies the HTTP-method to be used for hitting the web-services.
+* "input" : { .. } -- [optional, default is {}] -- specifies the arguments to be passed to the web-service.
+* "output" : { .. } -- [optional, default is {}] -- specifies the criteria for validation of the output of the web-service. Refer **check** section for further details.
+
+#### [construct] START_LOOP
+
+#### [construct] END_LOOP
+
+#### [construct] START_SESSION
+
+#### [construct] END_SESSION
 
 #### Input/Output
 
 ### Default
 
-### Steps
+### check
 
-### Checks
+#### [check] PRESENT
 
-#### PRESENT
-
-#### EXACT
+#### [check] EXACT
 
 
