@@ -165,7 +165,52 @@ The **TEST construct** is the actual evaluation or processing step that leads to
 
 #### [construct] START_LOOP
 
+The **START_LOOP construct** is the starting point of a loop, such that you can define what all test-cases (*TEST construct*) to be repeated and how many times. For example, in the following test-case JSON:
+
+```js
+{
+    "steps" : [
+        {
+            "construct" : "TEST",
+            "sid" : "Test-Case-1",
+            ...
+        },
+        {
+            "construct" : "START_LOOP",
+            "count" : 5,
+            ...
+        },
+        {
+            "construct" : "TEST",
+            "sid" : "Test-Case-2",
+            ...
+        },
+        {
+            "construct" : "TEST",
+            "sid" : "Test-Case-3",
+            ...
+        },
+        {
+            "construct" : "END_LOOP"
+        },
+        {
+            "construct" : "TEST",
+            "sid" : "Test-Case-4",
+            ...
+        }
+    ]
+}
+```
+
+* "count" : 5 -- [optional, default is 1] -- specifies the number of times the loop should be repeated.
+
+Test-Case-2 and Test-Case-3 will be executed one after the other repeatedly for 5 times, i.e. as [Test-Case-2, Test-Case-3, Test-Case-2, Test-Case-3,... (5 times)]. Test-Case-1 and Test-Case-4 will be executed just once as they do not fall in the loop delimited by *END_LOOP construct*.
+
+**NOTE:** Nesting of loops is not allowed.
+
 #### [construct] END_LOOP
+
+The **END_LOOP construct** is the ending point of a loop. Refer example in the *START_LOOP construct* section.
 
 #### [construct] START_SESSION
 
