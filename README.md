@@ -305,10 +305,228 @@ Examples,
 
 ### Default
 
+If you want to use some common attributes across your test-cases you can use the **default** element. Following are the supported attributes for default value definition in this element:
+* host
+* path
+* method
+* input - this will act as the base input for all the test-cases. In case a test-case also has its own input attribute, that input attribute will be merged over this default input to come up with a unified input to be used in the test-case. Thus, the input attribute of a test-case will, in a way, override any common properties between it and the default input.
+
 ### check
+
+The **check** element allows you to do validations on the JSON response of the web-service calls made by your test-cases.
 
 #### [check] PRESENT
 
+The **PRESENT check** simply checks if the specified attribute is present in the output (JSON response) or not. For example, in the following test-case JSON:
+
+```js
+{
+    "steps" : [
+        {
+            "construct" : "TEST",
+            "sid" : "FindIP",
+            "host" : "http://ip.jsontest.com",
+            "input" : {
+            },
+            "output" : {
+                "params" : [
+                    {
+                        "check" : "PRESENT",
+                        "name" : "ip"
+                    }
+                ]
+            } 
+        }
+    ]
+}
+```
+
+the framework will check whether the output of the web-service call has an attribute *ip* or not. For the sake of clarity the output of the web-service call made in this test case is something like:
+
+```js
+{"ip": "8.8.8.8"}
+```
+
+where the ip will be the IP of your system.
+
 #### [check] EXACT
 
+The **EXACT check** checks if the specified attribute present in the output (JSON response) has the exact value as specified in the *expected* parameter or not. For example, in the following test-case JSON:
 
+```js
+{
+    "steps" : [
+        {
+            "construct" : "TEST",
+            "sid" : "FetchHeaders",
+            "host" : "http://ip.jsontest.com",
+            "input" : {
+            },
+            "output" : {
+                "params" : [
+                    {
+                        "check" : "EXACT",
+                        "name" : "Host",
+                        "expected" : "headers.jsontest.com"
+                    }
+                ]
+            } 
+        }
+    ]
+}
+```
+
+the framework will check whether the output of the web-service call has an attribute *Host* and it has the exact value *headers.jsontest.com* or not. For the sake of clarity the output of the web-service call made in this test case is something like:
+
+```js
+{
+   "Accept-Language": "en-US,en;q=0.8",
+   "Host": "headers.jsontest.com",
+   "Accept-Charset": "ISO-8859-1,utf-8;q=0.7,*;q=0.3",
+   "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+}
+```
+
+#### Doing checks on nested (complex) response values
+
+Suppose you want to check whether the output (JSON response) of your test-case web-service call has an attribute *result* that contains an attribute *user* with *id* as *12345* and *address* with *city* as *Bangalore*, i.e. something like the following response:
+
+```js
+{
+    "result" : {
+        "user" : {
+            "id" : "12345",
+            "email" : "user.email@somedomain.com",
+            "address" : {
+                "city" : "Bangalore",
+                "state" : "Karnataka",
+                "country" : "India"
+            }
+        }
+    }
+}
+```
+
+you can write your checks in one of the following ways:
+
+* The nested way
+
+```js
+{
+    "steps" : [
+        {
+            "construct" : "TEST",
+            "sid" : "FindUser",
+            "host" : "http://some.webservice",
+            "path" : "/user/get"
+            "input" : {
+                "email" : "user.email@somedomain.com"
+            },
+            "output" : {
+                "params" : [
+                    {
+                        "check" : "PRESENT",
+                        "name" : "result",
+                        "expected" : [
+                            {
+                                "check" : "PRESENT",
+                                "name" : "user",
+                                "expected" : [
+                                    {
+                                        "check" : "EXACT",
+                                        "name" : "id",
+                                        "expected" : "12345"
+                                    },
+                                    {
+                                        "check" : "PRESENT",
+                                        "name" : "address",
+                                        "expected" : [
+                                            {
+                                                "check" : "EXACT",
+                                                "name" : "city",
+                                                "expected" : "Bangalore"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            } 
+        }
+    ]
+}
+```
+
+* The linear way
+
+```js
+{
+    "steps" : [
+        {
+            "construct" : "TEST",
+            "sid" : "FindUser",
+            "host" : "http://some.webservice",
+            "path" : "/user/get"
+            "input" : {
+                "email" : "user.email@somedomain.com"
+            },
+            "output" : {
+                "params" : [
+                    {
+                        "check" : "EXACT",
+                        "name" : "result.user.id",
+                        "expected" : "12345"
+                    },
+                    {
+                        "check" : "EXACT",
+                        "name" : "result.user.address.city",
+                        "expected" : "Bangalore"
+                    }
+                ]
+            } 
+        }
+    ]
+}
+```
+
+* The mixed way
+
+```js
+{
+    "steps" : [
+        {
+            "construct" : "TEST",
+            "sid" : "FindUser",
+            "host" : "http://some.webservice",
+            "path" : "/user/get"
+            "input" : {
+                "email" : "user.email@somedomain.com"
+            },
+            "output" : {
+                "params" : [
+                    {
+                        "check" : "PRESENT",
+                        "name" : "result.user",
+                        "expected" : [
+                            {
+                                "check" : "EXACT",
+                                "name" : "id",
+                                "expected" : "12345"
+                            },
+                            {
+                                "check" : "EXACT",
+                                "name" : "address.city",
+                                "expected" : "Bangalore"
+                            }
+                        ]
+                    }
+                ]
+            } 
+        }
+    ]
+}
+```
+
+Seems like the best of both world, doesn't it ?! Make your pick.
