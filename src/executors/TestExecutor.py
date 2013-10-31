@@ -169,7 +169,7 @@ class TestExecutor(BaseExecutor):
             self.__recordHit(control, sid, timeTaken, False)
             return
         
-        if None == step['output']:
+        if not 'output' in step or None == step['output']:
             self.__recordHit(control, sid, timeTaken, isSuccess)
             return
         
@@ -177,7 +177,7 @@ class TestExecutor(BaseExecutor):
         if None != statusCodeCheck and int(statusCodeCheck) != int(statusCode):
             TestExecutor._LOGGER.error("FAILED statusCodeCheck: expected=" + str(statusCodeCheck) + ", found=" + str(statusCode))
         
-        if None == step['output']['params']:
+        if not 'params' in step['output'] or None == step['output']['params']:
             self.__recordHit(control, sid, timeTaken, isSuccess)
             return
         
