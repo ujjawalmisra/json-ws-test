@@ -1,0 +1,573 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Json-ws-test by ujjawalmisra</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Json-ws-test</h1>
+        <p class="header">Simple framework for testing JSON (response) Web-Services</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/ujjawalmisra/json-ws-test/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/ujjawalmisra/json-ws-test/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/ujjawalmisra/json-ws-test">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/ujjawalmisra">ujjawalmisra</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a name="json-ws-test" class="anchor" href="#json-ws-test"><span class="octicon octicon-link"></span></a>json-ws-test</h1>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Copyright (c) 2013-2014 Ujjawal Misra. See the LICENSE file for license rights and limitations (MIT).</p>
+
+<h2>
+<a name="description" class="anchor" href="#description"><span class="octicon octicon-link"></span></a>Description</h2>
+
+<p><strong>JSON</strong> (JavaScript Object Notation) is being heavily used in various projects, systems and platforms as the response format of <strong>web-services</strong>. The web-services may, themselves, be RESTful or using HTTP Methods like GET or POST for making a call, i.e. for passing inputs. </p>
+
+<p>Developers end-up writing and saving curl calls for testing these web-services as and when they develop or change them. This is really ugly and cumbersome (to keep modifying these 'saved' curl calls for repetitive testing) !! Plus such a mechanism disallows using these curl calls to be seamlessly integrated in a Test-Suite or a Nightly-Build Test System, etc.</p>
+
+<p><strong>json-ws-test</strong> is simple framework for testing <strong>JSON (response) Web-Services</strong>. </p>
+
+<p>The Test-Cases, i.e. the ugly curl calls you were having earlier, are written in a JSON file using a simple and flexible format defined by the json-ws-test framework. This test-cases JSON file is passed as an argument to the framework, which then executes these test-cases and generates a SUMMARY for them in a Tabular as well as JSON structure.</p>
+
+<h3>
+<a name="sample" class="anchor" href="#sample"><span class="octicon octicon-link"></span></a>Sample</h3>
+
+<p>For the purpose of letting you have a flavor of what is in store for you in this framework we will use <a href="http://jsontest.com">http://jsontest.com</a> -- an online platform that exposes various web-services generating JSON responses.</p>
+
+<p>Consider the following sample test-case written in the JSON structure defined by json-ws-test framework:</p>
+
+<div class="highlight highlight-js"><pre><span class="p">{</span>
+    <span class="s2">"steps"</span> <span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"Echo"</span><span class="p">,</span>
+            <span class="s2">"host"</span> <span class="o">:</span> <span class="s2">"http://echo.jsontest.com/key/value/one/two"</span><span class="p">,</span>
+            <span class="s2">"output"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"params"</span> <span class="o">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"EXACT"</span><span class="p">,</span>
+                        <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"key"</span><span class="p">,</span>
+                        <span class="s2">"expected"</span> <span class="o">:</span> <span class="s2">"value"</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"EXACT"</span><span class="p">,</span>
+                        <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"one"</span><span class="p">,</span>
+                        <span class="s2">"expected"</span> <span class="o">:</span> <span class="s2">"two"</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">}</span> 
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>It is using a RESTful web-service (refer 'host') that returns the following JSON response:</p>
+
+<div class="highlight highlight-js"><pre><span class="p">{</span>
+   <span class="s2">"one"</span><span class="o">:</span> <span class="s2">"two"</span><span class="p">,</span>
+   <span class="s2">"key"</span><span class="o">:</span> <span class="s2">"value"</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>You can write the sample test-case in some file (you can find it in <em>sample/single.test.json</em>. You can then run the test-case from the base directory of the project as follows:</p>
+
+<div class="highlight highlight-bash"><pre>python src/Tester.py sample/single.test.json
+</pre></div>
+
+<p>Try it now!</p>
+
+<p>You will see a JSON version of this Summary of the test-case execution in the logs generated on your terminal:</p>
+
+<pre><code>2013-10-30 18:19:47,781 - INFO     - Tester     - ================================
+2013-10-30 18:19:47,781 - INFO     - Tester     - [SUMMARY JSON]
+2013-10-30 18:19:47,781 - INFO     - Tester     - {'failed': {'count': 0, 'time': 0}, 'total': {'count': 1, 'time': 0.565485954284668}, 'steps': {'Echo': {'failed': {'count': 0, 'time': 0}, 'total': {'count': 1, 'time': 0.565485954284668}, 'passed': {'count': 1, 'time': 0.565485954284668}}}, 'passed': {'count': 1, 'time': 0.565485954284668}}
+2013-10-30 18:19:47,781 - INFO     - Tester     - ================================
+</code></pre>
+
+<p>You will also see a beautiful Summary in a tabular form for immediate use:</p>
+
+<pre><code>2013-10-30 18:19:47,781 - INFO     - Tester     - ================================
+2013-10-30 18:19:47,781 - INFO     - Tester     - [SUMMARY]
+2013-10-30 18:19:47,782 - INFO     - Tester     - |------------------------------|--------------|--------------|--------------|
+2013-10-30 18:19:47,782 - INFO     - Tester     - |            [sid]             |   [total]    |   [passed]   |   [failed]   |
+2013-10-30 18:19:47,782 - INFO     - Tester     - |------------------------------|--------------|--------------|--------------|
+2013-10-30 18:19:47,782 - INFO     - Tester     - |                              | count avg(ms)| count avg(ms)| count avg(ms)|
+2013-10-30 18:19:47,782 - INFO     - Tester     - |------------------------------|--------------|--------------|--------------|
+2013-10-30 18:19:47,782 - INFO     - Tester     - |Echo                          |     1     565|     1     565|     0       0|
+2013-10-30 18:19:47,783 - INFO     - Tester     - |------------------------------|--------------|--------------|--------------|
+2013-10-30 18:19:47,783 - INFO     - Tester     - |OVERALL                       |     1     565|     1     565|     0       0|
+2013-10-30 18:19:47,783 - INFO     - Tester     - |------------------------------|--------------|--------------|--------------|
+2013-10-30 18:19:47,783 - INFO     - Tester     - ================================
+</code></pre>
+
+<h2>
+<a name="the-language-elements" class="anchor" href="#the-language-elements"><span class="octicon octicon-link"></span></a>The Language Elements</h2>
+
+<p>Lets know do a walkthrough of the elements of the test-case definition language of this framework. All the elements are defined in JSON format.</p>
+
+<h3>
+<a name="steps" class="anchor" href="#steps"><span class="octicon octicon-link"></span></a>steps</h3>
+
+<p>The <strong>steps</strong> element is a JSON array that defines the order in which individual test-cases need to be executed. For example, in the following test-case JSON:</p>
+
+<div class="highlight highlight-js"><pre><span class="p">{</span>
+    <span class="s2">"steps"</span> <span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"Test-Case-1"</span><span class="p">,</span>
+            <span class="p">...</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"Test-Case-2"</span><span class="p">,</span>
+            <span class="p">...</span>
+        <span class="p">},</span>
+        <span class="p">...</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"Test-Case-k"</span><span class="p">,</span>
+            <span class="p">...</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>the test-cases will be executed in the specified order - Test-Case-1 followed by Test-Case-2 and so on uptil Test-Case-k.</p>
+
+<h3>
+<a name="construct" class="anchor" href="#construct"><span class="octicon octicon-link"></span></a>construct</h3>
+
+<p>The <strong>construct</strong> element is used to define a step in the execution of a flow to be tested.</p>
+
+<h4>
+<a name="construct-test" class="anchor" href="#construct-test"><span class="octicon octicon-link"></span></a>[construct] TEST</h4>
+
+<p>The <strong>TEST construct</strong> is the actual evaluation or processing step that leads to a web-service being called. For example, in the following test-case JSON:</p>
+
+<div class="highlight highlight-js"><pre><span class="p">{</span>
+    <span class="s2">"steps"</span> <span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"Echo"</span><span class="p">,</span>
+            <span class="s2">"host"</span> <span class="o">:</span> <span class="s2">"http://echo.jsontest.com"</span><span class="p">,</span>
+            <span class="s2">"path"</span> <span class="o">:</span> <span class="s2">"/key/value/one/two"</span><span class="p">,</span>
+            <span class="s2">"method"</span> <span class="o">:</span> <span class="s2">"GET"</span><span class="p">,</span>
+            <span class="s2">"input"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="p">...</span>
+            <span class="p">},</span> 
+            <span class="s2">"output"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="p">...</span>
+            <span class="p">}</span> 
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<ul>
+<li>"construct" : "TEST" -- [required] -- specifies the construct type.</li>
+<li>"sid" : "Echo" -- specifies the step-id. This is of particular importance as we will see in case of <em>construct START_SESSION and END_SESSION</em>.</li>
+<li>"host" : "<a href="http://echo.jsontest.com">http://echo.jsontest.com</a>" -- [required] -- specifies the web-service to be hit.</li>
+<li>"path" : "/key/value/one/two" -- [optional, default is ""] -- specifies the path to be appended to the <em>host</em>. Alternatively, the <em>host</em> may be fully qualified with the path (eg. "host" : "<a href="http://echo.jsontest.com/key/value/one/two%22">http://echo.jsontest.com/key/value/one/two"</a>) in which case this attribute may be omitted.</li>
+<li>"method" : "GET" -- [optional, default is "GET"] -- specifies the HTTP-method to be used for hitting the web-services.</li>
+<li>"input" : { .. } -- [optional, default is {}] -- specifies the arguments to be passed to the web-service.</li>
+<li>"output" : { .. } -- [optional, default is {}] -- specifies the criteria for validation of the output of the web-service. Refer <strong>check</strong> section for further details.</li>
+</ul><h4>
+<a name="construct-start_loop" class="anchor" href="#construct-start_loop"><span class="octicon octicon-link"></span></a>[construct] START_LOOP</h4>
+
+<p>The <strong>START_LOOP construct</strong> is the starting point of a loop, such that you can define what all test-cases (<em>TEST construct</em>) to be repeated and how many times. For example, in the following test-case JSON:</p>
+
+<div class="highlight highlight-js"><pre><span class="p">{</span>
+    <span class="s2">"steps"</span> <span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"Test-Case-1"</span><span class="p">,</span>
+            <span class="p">...</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"START_LOOP"</span><span class="p">,</span>
+            <span class="s2">"count"</span> <span class="o">:</span> <span class="mi">5</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"Test-Case-2"</span><span class="p">,</span>
+            <span class="p">...</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"Test-Case-3"</span><span class="p">,</span>
+            <span class="p">...</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"END_LOOP"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"Test-Case-4"</span><span class="p">,</span>
+            <span class="p">...</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<ul>
+<li>"count" : 5 -- [optional, default is 1] -- specifies the number of times the loop should be repeated.</li>
+</ul><p>Test-Case-2 and Test-Case-3 will be executed one after the other repeatedly for 5 times, i.e. as [Test-Case-2, Test-Case-3, Test-Case-2, Test-Case-3,... (5 times)]. Test-Case-1 and Test-Case-4 will be executed just once as they do not fall in the loop ended by <em>END_LOOP construct</em>.</p>
+
+<p><strong>NOTE:</strong> Nesting of loops is not allowed.</p>
+
+<h4>
+<a name="construct-end_loop" class="anchor" href="#construct-end_loop"><span class="octicon octicon-link"></span></a>[construct] END_LOOP</h4>
+
+<p>The <strong>END_LOOP construct</strong> is the ending point of a loop. Refer example in the <em>START_LOOP construct</em> section.</p>
+
+<h4>
+<a name="construct-start_session" class="anchor" href="#construct-start_session"><span class="octicon octicon-link"></span></a>[construct] START_SESSION</h4>
+
+<p>The <strong>START_SESSION construct</strong> is the starting point for defining a list of test-cases such that they form a part of a session. </p>
+
+<p>Lets first understand what is the meaning of a <em>session</em> here. When creating test-cases you may want to use the <em>input</em> or <em>output</em> attributes of one test-case for defining the <em>input</em> or <em>output</em> attributes of another test-case. In order to facilitate this there needs to be a block that defines a list of test-cases where <em>input</em> and <em>output</em> of any test-case can be referred in a subsequent test-case within the block.</p>
+
+<p>For example, in the following test-case JSON:</p>
+
+<div class="highlight highlight-js"><pre><span class="p">{</span>
+    <span class="s2">"steps"</span> <span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"Test-Case-1"</span><span class="p">,</span>
+            <span class="p">...</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"START_SESSION"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"Test-Case-2"</span><span class="p">,</span>
+            <span class="s2">"host"</span> <span class="o">:</span> <span class="s2">"http://ip.jsontest.com"</span><span class="p">,</span>
+            <span class="s2">"input"</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="p">},</span>
+            <span class="s2">"output"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"params"</span> <span class="o">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"PRESENT"</span><span class="p">,</span>
+                        <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"ip"</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">}</span> 
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"Test-Case-3"</span><span class="p">,</span>
+            <span class="s2">"host"</span> <span class="o">:</span> <span class="s2">"http://echo.jsontest.com/ip/$OUT[Test-Case-2][ip]"</span><span class="p">,</span>
+            <span class="s2">"output"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"params"</span> <span class="o">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"EXACT"</span><span class="p">,</span>
+                        <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"ip"</span><span class="p">,</span>
+                        <span class="s2">"expected"</span> <span class="o">:</span> <span class="s2">"$OUT[Test-Case-2][ip]"</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">}</span> 
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"END_SESSION"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"Test-Case-4"</span><span class="p">,</span>
+            <span class="p">...</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Test-Case-3 is refering to the output of Test-Case-2 for defining its web-service call (in the <em>host</em> attribute) as well as defining the expected output (<em>$OUT[Test-Case-2][ip]</em>). Test-Case-1 and Test-Case-4 cannot be referred in the session as they do not fall in the block ended by <em>END_SESSION construct</em>.</p>
+
+<p>Following attributes of a <em>TEST construct</em> can be templatized in such a way:</p>
+
+<ul>
+<li>host</li>
+<li>path</li>
+<li>input (value part of the attributes in input)</li>
+<li>output (value part of the attributes in output)</li>
+</ul><p>Refer <strong>Input/Output</strong> section for further details.</p>
+
+<p><strong>NOTE:</strong> Nesting of sessions is not allowed.</p>
+
+<h4>
+<a name="construct-end_session" class="anchor" href="#construct-end_session"><span class="octicon octicon-link"></span></a>[construct] END_SESSION</h4>
+
+<p>The <strong>END_SESSION construct</strong> is the ending point of the test-case list to be considered for being a part of the session. Refer example in the <em>START_SESSION construct</em> section.</p>
+
+<h4>
+<a name="inputoutput" class="anchor" href="#inputoutput"><span class="octicon octicon-link"></span></a>Input/Output</h4>
+
+<p>Following keywords are supported for referring session (defined by <em>START_LOOP and END_LOOP constructs</em>) parameters:</p>
+
+<ul>
+<li>IN : to refer to input attributes of a previous test-case in the session</li>
+<li>OUT : to refer to output (response JSON generated by the web-service call) of a previous test-case in the session</li>
+</ul><p>The syntax for refering to a session parameter is:</p>
+
+<ul>
+<li>$IN[sid][attribute]</li>
+<li>$OUT[sid][attribute]
+where <em>sid</em> is step-id and attribute is a JSON attribute being referred.</li>
+</ul><p>Examples,</p>
+
+<ul>
+<li>$IN[RegisterUser][user.address.city]</li>
+<li>$OUT[FindIP][ip]</li>
+</ul><h3>
+<a name="default" class="anchor" href="#default"><span class="octicon octicon-link"></span></a>Default</h3>
+
+<p>If you want to use some common attributes across your test-cases you can use the <strong>default</strong> element. Following are the supported attributes for default value definition in this element:</p>
+
+<ul>
+<li>host</li>
+<li>path</li>
+<li>method</li>
+<li>input - this will act as the base input for all the test-cases. In case a test-case also has its own input attribute, that input attribute will be merged over this default input to come up with a unified input to be used in the test-case. Thus, the input attribute of a test-case will, in a way, override any common properties between it and the default input.</li>
+</ul><h3>
+<a name="check" class="anchor" href="#check"><span class="octicon octicon-link"></span></a>check</h3>
+
+<p>The <strong>check</strong> element allows you to do validations on the JSON response of the web-service calls made by your test-cases.</p>
+
+<h4>
+<a name="check-present" class="anchor" href="#check-present"><span class="octicon octicon-link"></span></a>[check] PRESENT</h4>
+
+<p>The <strong>PRESENT check</strong> simply checks if the specified attribute is present in the output (JSON response) or not. For example, in the following test-case JSON:</p>
+
+<div class="highlight highlight-js"><pre><span class="p">{</span>
+    <span class="s2">"steps"</span> <span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"FindIP"</span><span class="p">,</span>
+            <span class="s2">"host"</span> <span class="o">:</span> <span class="s2">"http://ip.jsontest.com"</span><span class="p">,</span>
+            <span class="s2">"input"</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="p">},</span>
+            <span class="s2">"output"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"params"</span> <span class="o">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"PRESENT"</span><span class="p">,</span>
+                        <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"ip"</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">}</span> 
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>the framework will check whether the output of the web-service call has an attribute <em>ip</em> or not. For the sake of clarity the output of the web-service call made in this test case is something like:</p>
+
+<div class="highlight highlight-js"><pre><span class="p">{</span><span class="s2">"ip"</span><span class="o">:</span> <span class="s2">"8.8.8.8"</span><span class="p">}</span>
+</pre></div>
+
+<p>where the ip will be the IP of your system.</p>
+
+<h4>
+<a name="check-exact" class="anchor" href="#check-exact"><span class="octicon octicon-link"></span></a>[check] EXACT</h4>
+
+<p>The <strong>EXACT check</strong> checks if the specified attribute present in the output (JSON response) has the exact value as specified in the <em>expected</em> parameter or not. For example, in the following test-case JSON:</p>
+
+<div class="highlight highlight-js"><pre><span class="p">{</span>
+    <span class="s2">"steps"</span> <span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"FetchHeaders"</span><span class="p">,</span>
+            <span class="s2">"host"</span> <span class="o">:</span> <span class="s2">"http://ip.jsontest.com"</span><span class="p">,</span>
+            <span class="s2">"input"</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="p">},</span>
+            <span class="s2">"output"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"params"</span> <span class="o">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"EXACT"</span><span class="p">,</span>
+                        <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"Host"</span><span class="p">,</span>
+                        <span class="s2">"expected"</span> <span class="o">:</span> <span class="s2">"headers.jsontest.com"</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">}</span> 
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>the framework will check whether the output of the web-service call has an attribute <em>Host</em> and it has the exact value <em>headers.jsontest.com</em> or not. For the sake of clarity the output of the web-service call made in this test case is something like:</p>
+
+<div class="highlight highlight-js"><pre><span class="p">{</span>
+   <span class="s2">"Accept-Language"</span><span class="o">:</span> <span class="s2">"en-US,en;q=0.8"</span><span class="p">,</span>
+   <span class="s2">"Host"</span><span class="o">:</span> <span class="s2">"headers.jsontest.com"</span><span class="p">,</span>
+   <span class="s2">"Accept-Charset"</span><span class="o">:</span> <span class="s2">"ISO-8859-1,utf-8;q=0.7,*;q=0.3"</span><span class="p">,</span>
+   <span class="s2">"Accept"</span><span class="o">:</span> <span class="s2">"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4>
+<a name="doing-checks-on-nested-complex-response-values" class="anchor" href="#doing-checks-on-nested-complex-response-values"><span class="octicon octicon-link"></span></a>Doing checks on nested (complex) response values</h4>
+
+<p>Suppose you want to check whether the output (JSON response) of your test-case web-service call has an attribute <em>result</em> that contains an attribute <em>user</em> with <em>id</em> as <em>12345</em> and <em>address</em> with <em>city</em> as <em>Bangalore</em>, i.e. something like the following response:</p>
+
+<div class="highlight highlight-js"><pre><span class="p">{</span>
+    <span class="s2">"result"</span> <span class="o">:</span> <span class="p">{</span>
+        <span class="s2">"user"</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="s2">"id"</span> <span class="o">:</span> <span class="s2">"12345"</span><span class="p">,</span>
+            <span class="s2">"email"</span> <span class="o">:</span> <span class="s2">"user.email@somedomain.com"</span><span class="p">,</span>
+            <span class="s2">"address"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"city"</span> <span class="o">:</span> <span class="s2">"Bangalore"</span><span class="p">,</span>
+                <span class="s2">"state"</span> <span class="o">:</span> <span class="s2">"Karnataka"</span><span class="p">,</span>
+                <span class="s2">"country"</span> <span class="o">:</span> <span class="s2">"India"</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>you can write your checks in one of the following ways:</p>
+
+<ul>
+<li>The nested way</li>
+</ul><div class="highlight highlight-js"><pre><span class="p">{</span>
+    <span class="s2">"steps"</span> <span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"FindUser"</span><span class="p">,</span>
+            <span class="s2">"host"</span> <span class="o">:</span> <span class="s2">"http://some.webservice"</span><span class="p">,</span>
+            <span class="s2">"path"</span> <span class="o">:</span> <span class="s2">"/user/get"</span>
+            <span class="s2">"input"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"email"</span> <span class="o">:</span> <span class="s2">"user.email@somedomain.com"</span>
+            <span class="p">},</span>
+            <span class="s2">"output"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"params"</span> <span class="o">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"PRESENT"</span><span class="p">,</span>
+                        <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"result"</span><span class="p">,</span>
+                        <span class="s2">"expected"</span> <span class="o">:</span> <span class="p">[</span>
+                            <span class="p">{</span>
+                                <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"PRESENT"</span><span class="p">,</span>
+                                <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"user"</span><span class="p">,</span>
+                                <span class="s2">"expected"</span> <span class="o">:</span> <span class="p">[</span>
+                                    <span class="p">{</span>
+                                        <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"EXACT"</span><span class="p">,</span>
+                                        <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"id"</span><span class="p">,</span>
+                                        <span class="s2">"expected"</span> <span class="o">:</span> <span class="s2">"12345"</span>
+                                    <span class="p">},</span>
+                                    <span class="p">{</span>
+                                        <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"PRESENT"</span><span class="p">,</span>
+                                        <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"address"</span><span class="p">,</span>
+                                        <span class="s2">"expected"</span> <span class="o">:</span> <span class="p">[</span>
+                                            <span class="p">{</span>
+                                                <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"EXACT"</span><span class="p">,</span>
+                                                <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"city"</span><span class="p">,</span>
+                                                <span class="s2">"expected"</span> <span class="o">:</span> <span class="s2">"Bangalore"</span>
+                                            <span class="p">}</span>
+                                        <span class="p">]</span>
+                                    <span class="p">}</span>
+                                <span class="p">]</span>
+                            <span class="p">}</span>
+                        <span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">}</span> 
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<ul>
+<li>The linear way</li>
+</ul><div class="highlight highlight-js"><pre><span class="p">{</span>
+    <span class="s2">"steps"</span> <span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"FindUser"</span><span class="p">,</span>
+            <span class="s2">"host"</span> <span class="o">:</span> <span class="s2">"http://some.webservice"</span><span class="p">,</span>
+            <span class="s2">"path"</span> <span class="o">:</span> <span class="s2">"/user/get"</span>
+            <span class="s2">"input"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"email"</span> <span class="o">:</span> <span class="s2">"user.email@somedomain.com"</span>
+            <span class="p">},</span>
+            <span class="s2">"output"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"params"</span> <span class="o">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"EXACT"</span><span class="p">,</span>
+                        <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"result.user.id"</span><span class="p">,</span>
+                        <span class="s2">"expected"</span> <span class="o">:</span> <span class="s2">"12345"</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"EXACT"</span><span class="p">,</span>
+                        <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"result.user.address.city"</span><span class="p">,</span>
+                        <span class="s2">"expected"</span> <span class="o">:</span> <span class="s2">"Bangalore"</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">}</span> 
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<ul>
+<li>The mixed way</li>
+</ul><div class="highlight highlight-js"><pre><span class="p">{</span>
+    <span class="s2">"steps"</span> <span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"construct"</span> <span class="o">:</span> <span class="s2">"TEST"</span><span class="p">,</span>
+            <span class="s2">"sid"</span> <span class="o">:</span> <span class="s2">"FindUser"</span><span class="p">,</span>
+            <span class="s2">"host"</span> <span class="o">:</span> <span class="s2">"http://some.webservice"</span><span class="p">,</span>
+            <span class="s2">"path"</span> <span class="o">:</span> <span class="s2">"/user/get"</span>
+            <span class="s2">"input"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"email"</span> <span class="o">:</span> <span class="s2">"user.email@somedomain.com"</span>
+            <span class="p">},</span>
+            <span class="s2">"output"</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"params"</span> <span class="o">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"PRESENT"</span><span class="p">,</span>
+                        <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"result.user"</span><span class="p">,</span>
+                        <span class="s2">"expected"</span> <span class="o">:</span> <span class="p">[</span>
+                            <span class="p">{</span>
+                                <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"EXACT"</span><span class="p">,</span>
+                                <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"id"</span><span class="p">,</span>
+                                <span class="s2">"expected"</span> <span class="o">:</span> <span class="s2">"12345"</span>
+                            <span class="p">},</span>
+                            <span class="p">{</span>
+                                <span class="s2">"check"</span> <span class="o">:</span> <span class="s2">"EXACT"</span><span class="p">,</span>
+                                <span class="s2">"name"</span> <span class="o">:</span> <span class="s2">"address.city"</span><span class="p">,</span>
+                                <span class="s2">"expected"</span> <span class="o">:</span> <span class="s2">"Bangalore"</span>
+                            <span class="p">}</span>
+                        <span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">}</span> 
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Seems like the best of both world, doesn't it ?! Make your pick.</p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
