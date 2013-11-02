@@ -1,5 +1,7 @@
 # json-ws-test
 
+Tes your JSON (response) Web-Services using JSON.
+
 
 ## License
 
