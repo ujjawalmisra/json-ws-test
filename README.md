@@ -1,11 +1,23 @@
 # json-ws-test
 
-Tes your JSON (response) Web-Services using JSON.
+Test your JSON (response) Web-Services using JSON.
+
+## Benefits
+* No need to manage ugly curl calls
+* No need to bind to any language (Java, Python etc.) for writing test-cases
+* Test Web-Services in the language of Web-Services -- JSON
+* Simple to understand and use
+
+## Requirements
+
+* Python 
+
+Tested on Python (2.7.x).
 
 
 ## License
 
-Copyright (c) 2013-2014 Ujjawal Misra. See the LICENSE file for license rights and limitations (MIT).
+Copyright &copy; 2013-2014 Ujjawal Misra. See the [LICENSE](./LICENSE.txt) file for license rights and limitations (MIT).
 
 
 ## Description
