@@ -6,7 +6,7 @@ class DictUtils:
         if None != t:
             found = True
             if str == type(key):
-                keys = [key]
+                keys = key.split('.')
             else:
                 keys = key
             for k in keys:
