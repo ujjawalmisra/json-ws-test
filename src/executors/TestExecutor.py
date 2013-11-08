@@ -1,13 +1,14 @@
 import json
+import re
 import sys
+import time
+from twisted.protocols.sip import statusCodes
 import urllib
 import urllib2
 
 from DictUtils import DictUtils
 from executors.BaseExecutor import BaseExecutor
 from validators.ValidatorFactory import ValidatorFactory
-import re
-import time
 
 
 class TestExecutor(BaseExecutor):
@@ -143,11 +144,17 @@ class TestExecutor(BaseExecutor):
             else:
                 url += "?" + data
                 res = urllib2.urlopen(url)
-        except urllib2.URLError, e:
+        except IOError, e:
+            TestExecutor._LOGGER.debug("caught exception e:" + str(e))
             isSuccess = False
-            statusCode = e.code
-            response = e.reason
-            TestExecutor._LOGGER.debug("caught exception")
+            if hasattr(e, 'code'):
+                statusCode = e.code
+            else:
+                statusCode = 500
+            if hasattr(e, 'reason'):
+                response = e.reason
+            else:
+                response = ""
         else:
             isSuccess = True
             statusCode = res.getcode()
@@ -159,7 +166,11 @@ class TestExecutor(BaseExecutor):
         TestExecutor._LOGGER.info("statusCode: " + str(statusCode))
         TestExecutor._LOGGER.info("response: " + response)
         
-        responseDict = DictUtils.convert(json.loads(response))
+        try:
+            responseDict = DictUtils.convert(json.loads(response))
+        except ValueError, e:
+            TestExecutor._LOGGER.debug("caught exception e:" + str(e))
+            responseDict = None
         
         if control['session']['running']:
             control['session']['steps'].update({sid: {'IN':inputData, 'SC':statusCode, 'OUT':responseDict}})
