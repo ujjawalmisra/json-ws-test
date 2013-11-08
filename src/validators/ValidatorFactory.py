@@ -21,15 +21,20 @@ class ValidatorFactory:
     
     @staticmethod
     def validate(criteria, toValidate):
+        ValidatorFactory._LOGGER.debug("criteria: " + str(criteria))
+        ValidatorFactory._LOGGER.debug("toValidate: " + str(toValidate))
         if None == criteria:
+            ValidatorFactory._LOGGER.debug("None criteria, so returning True")
             return True
         if not 'check' in criteria:
+            ValidatorFactory._LOGGER.debug("'check' not in criteria, so returning True, criteria: " + str(criteria))
             return True
         validator = ValidatorFactory.getValidator(criteria['check'])
         if None == validator:
-            ValidatorFactory._LOGGER.error("no validator found for check: " + criteria['check'])
+            ValidatorFactory._LOGGER.error("None validator found for, so returning False, check: " + criteria['check'])
             return False
         isValid = validator.validate(criteria, toValidate)
+        ValidatorFactory._LOGGER.debug("isValid: " + str(isValid))
         if not isValid:
             return False
         if isinstance(validator, PresentValidator) and 'expected' in criteria and list == type(criteria['expected']):
