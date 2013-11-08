@@ -1,4 +1,5 @@
 from validators.BaseValidator import BaseValidator
+from DictUtils import DictUtils
 
 
 class ExactValidator(BaseValidator):
@@ -16,16 +17,17 @@ class ExactValidator(BaseValidator):
         elif not 'name' in criteria:
             ExactValidator._LOGGER.debug("'name' not in criteria, so returning False")
             return False
-        elif not criteria['name'] in toValidate:
+        elif None == DictUtils.defaultIfNone(toValidate, None, criteria['name']):
             ExactValidator._LOGGER.debug("criteria['name']: " + criteria['name'] + " not in toValidate, so returning False")
             return False
         elif not 'expected' in criteria:
             ExactValidator._LOGGER.debug("no expected found in criteria, so returning True")
             return True
         else:
-            if type(criteria['expected']) != type(toValidate[criteria['name']]):
-                ExactValidator._LOGGER.debug("type mismatch, so returning True - type(criteria['expected']): " + str(type(criteria['expected'])) + ", type(toValidate['" + criteria['name'] + "']): " + str(type(toValidate[criteria['name']])))
+            toValidateVal = DictUtils.defaultIfNone(toValidate, None, criteria['name'])
+            if type(criteria['expected']) != type(toValidateVal):
+                ExactValidator._LOGGER.debug("type mismatch, so returning True - type(criteria['expected']): " + str(type(criteria['expected'])) + ", type(toValidate['" + criteria['name'] + "']): " + str(type(toValidateVal)))
                 return False
             else:
-                ExactValidator._LOGGER.debug("matching string criteria['expected']: " + criteria['expected'] + ", toValidate['" + criteria['name'] + "']: " + toValidate[criteria['name']])
-                return criteria['expected'] == toValidate[criteria['name']]
+                ExactValidator._LOGGER.debug("matching string criteria['expected']: " + criteria['expected'] + ", toValidate['" + criteria['name'] + "']: " + toValidateVal)
+                return criteria['expected'] == toValidateVal
