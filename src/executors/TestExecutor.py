@@ -2,7 +2,6 @@ import json
 import re
 import sys
 import time
-import urllib
 import urllib2
 
 from DictUtils import DictUtils
@@ -26,7 +25,7 @@ class TestExecutor(BaseExecutor):
         for match in matches:
             
             paramType = match[1]
-            stepId    = match[2]
+            stepId = match[2]
             paramPath = match[3]
             
             TestExecutor._LOGGER.debug("session-steps: " + str(control['session']['steps']))
@@ -59,26 +58,36 @@ class TestExecutor(BaseExecutor):
 
             TestExecutor._LOGGER.debug("tInputStr: " + str(tInputStr))
         return tInputStr
+
+    def __detemplatizeList(self, inputList, control):
+        if None == inputList or not control['session']['running']:
+            return inputList
+        tInputList = list()
+        for v in inputList:
+            tInputList.append(self.__detemplatizeAny(v, control))
+        return tInputList
+
     
     def __detemplatize(self, inputData, control):
         if None == inputData or not control['session']['running']:
             return inputData
         tInputData = dict()
         for k, v in inputData.iteritems():
-            tV = None
-            if None != v:
-                if type(v) == str:
-                    tV = self.__detemplatizeStr(v, control)
-                elif type(v) == list:
-                    tV = []
-                    for item in list:
-                        tV.append(TestExecutor.__detemplatizeStr(item, control))
-                elif type(v) == dict:
-                    tV = TestExecutor.__detemplatize(v, control)
-                else:
-                    tV = v
-            tInputData[k] = tV
+            tInputData[k] = self.__detemplatizeAny(v, control)
         return tInputData
+
+    def __detemplatizeAny(self, v, control):
+        tV = None
+        if None != v:
+            if str == type(v):
+                tV = self.__detemplatizeStr(v, control)
+            elif list == type(v):
+                tV = TestExecutor.__detemplatizeList(v, control)
+            elif dict == type(v):
+                tV = TestExecutor.__detemplatize(v, control)
+            else:
+                tV = v
+        return tV
 
     
     def __recordHit(self, control, sid, timeTaken, isPass):
@@ -138,7 +147,8 @@ class TestExecutor(BaseExecutor):
         
         if None != inputData:
             inputData = self.__detemplatize(inputData, control)
-            data = urllib.urlencode(inputData)
+            # data = urllib.urlencode(inputData)
+            data = DictUtils.recursiveUrlencode(inputData)
         else:
             data = ""
         
