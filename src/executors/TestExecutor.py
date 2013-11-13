@@ -2,7 +2,6 @@ import json
 import re
 import sys
 import time
-from twisted.protocols.sip import statusCodes
 import urllib
 import urllib2
 
@@ -15,7 +14,7 @@ class TestExecutor(BaseExecutor):
     
     def __init__(self):
         TestExecutor._LOGGER.debug("created TestExecutor")
-        self.__inputRE = re.compile('(\$(IN|OUT)\[([\w]+)\]\[([\w]+)\])')
+        self.__inputRE = re.compile('(\$(IN|OUT)\[([\w]+)\]\[([\w\.]+)\])')
     
     def __detemplatizeStr(self, inputStr, control):
         if None == inputStr:
@@ -44,23 +43,28 @@ class TestExecutor(BaseExecutor):
                 TestExecutor._LOGGER.debug("no sidData")
                 continue
             tokenVal = sidData
-            
+            TestExecutor._LOGGER.debug("tokenVal: " + str(tokenVal))
             for token in paramPath.split('.'):
+                TestExecutor._LOGGER.debug("token: " + token)
                 if token in tokenVal:
                     tokenVal = tokenVal[token]
                 else:
                     tokenVal = None
+                    TestExecutor._LOGGER.debug("no token found, assigned None")
                     break
-                
+
+            TestExecutor._LOGGER.debug("tokenVal: " + str(tokenVal))
             if None != tokenVal:
                 tInputStr = tInputStr.replace(match[0], str(tokenVal))
+
+            TestExecutor._LOGGER.debug("tInputStr: " + str(tInputStr))
         return tInputStr
     
     def __detemplatize(self, inputData, control):
         if None == inputData or not control['session']['running']:
             return inputData
         tInputData = dict()
-        for k,v in inputData.iteritems():
+        for k, v in inputData.iteritems():
             tV = None
             if None != v:
                 if type(v) == str:
@@ -71,6 +75,8 @@ class TestExecutor(BaseExecutor):
                         tV.append(TestExecutor.__detemplatizeStr(item, control))
                 elif type(v) == dict:
                     tV = TestExecutor.__detemplatize(v, control)
+                else:
+                    tV = v
             tInputData[k] = tV
         return tInputData
 
@@ -164,11 +170,17 @@ class TestExecutor(BaseExecutor):
         timeTaken = (endTime - startTime)
             
         TestExecutor._LOGGER.info("statusCode: " + str(statusCode))
-        TestExecutor._LOGGER.info("response: " + response)
+        TestExecutor._LOGGER.info("response: " + str(response))
         
         try:
-            responseDict = DictUtils.convert(json.loads(response))
+            jsonRes = json.loads(response)
+            TestExecutor._LOGGER.debug("jsonRes: " + str(jsonRes))
+            responseDict = DictUtils.convert(jsonRes)
+            TestExecutor._LOGGER.debug("responseDict: " + str(responseDict))
         except ValueError, e:
+            TestExecutor._LOGGER.debug("caught exception e:" + str(e))
+            responseDict = None
+        except TypeError, e:
             TestExecutor._LOGGER.debug("caught exception e:" + str(e))
             responseDict = None
         
