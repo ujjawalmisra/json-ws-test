@@ -32,7 +32,13 @@ class DictUtils:
     
     @staticmethod
     def convert(data):
-        if isinstance(data, basestring):
+        if int == type(data):
+            return int(data)
+        elif float == type(data):
+            return float(data)
+        elif bool == type(data):
+            return bool(data)
+        elif isinstance(data, basestring):
             return str(data)
         elif isinstance(data, collections.Mapping):
             return dict(map(DictUtils.convert, data.iteritems()))
