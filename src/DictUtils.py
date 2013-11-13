@@ -106,8 +106,8 @@ class DictUtils:
 #--------------------------------
 # [test code]
 #--------------------------------
-print "=================================="
-d = {"user" : { "name" : "UJJAWAL", "address" : [ {"city" : "BLR", "phone" : [ ["111", "222"], ["333", "444"]]}, {"city" : "ALD", "phone" : ["555", "666"]}]}}
-print "d: " + str(d)
-print "urlencoded: " + DictUtils.recursiveUrlencode(d)
-print "=================================="
+#print "=================================="
+#d = {"user" : { "name" : "UJJAWAL", "address" : [ {"city" : "BLR", "phone" : [ ["111", "222"], ["333", "444"]]}, {"city" : "ALD", "phone" : ["555", "666"]}]}}
+#print "d: " + str(d)
+#print "urlencoded: " + DictUtils.recursiveUrlencode(d)
+#print "=================================="

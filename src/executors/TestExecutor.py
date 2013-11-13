@@ -152,6 +152,8 @@ class TestExecutor(BaseExecutor):
         else:
             data = ""
         
+        TestExecutor._LOGGER.debug("request data: " + str(data))
+        
         startTime = time.time()
         
         try:
