@@ -126,7 +126,7 @@ class TestExecutor(BaseExecutor):
         host = DictUtils.defaultIfNone(step, default, 'host')
         path = DictUtils.defaultIfNone(step, default, 'path')
         method = DictUtils.defaultIfNone(step, default, 'method')
-        commonInputData = DictUtils.defaultIfNone(None, default, 'commonInput')
+        commonInputData = DictUtils.defaultIfNone(None, default, 'input')
         inputData = DictUtils.defaultIfNone(step, default, 'input')
         
         if None != path:
