@@ -29,5 +29,5 @@ class ExactValidator(BaseValidator):
                 ExactValidator._LOGGER.debug("type mismatch, so returning True - type(criteria['expected']): " + str(type(criteria['expected'])) + ", type(toValidate['" + criteria['name'] + "']): " + str(type(toValidateVal)))
                 return False
             else:
-                ExactValidator._LOGGER.debug("matching string criteria['expected']: " + criteria['expected'] + ", toValidate['" + criteria['name'] + "']: " + toValidateVal)
+                ExactValidator._LOGGER.debug("matching string criteria['expected']: " + str(criteria['expected']) + ", toValidate['" + criteria['name'] + "']: " + str(toValidateVal))
                 return criteria['expected'] == toValidateVal
