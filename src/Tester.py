@@ -99,7 +99,10 @@ class Tester:
         Tester.__LOGGER.info(self.__formatResultSeparator())
         Tester.__LOGGER.info(self.__formatResultHead2())
         Tester.__LOGGER.info(self.__formatResultSeparator())
-        for sid in control['result']['steps']:
+        for step in self.__config['steps']:
+            if not 'sid' in step:
+                continue
+            sid = step['sid']
             sidData = control['result']['steps'][sid]
             Tester.__LOGGER.info(self.__formatResultStr(sid, sidData))
         Tester.__LOGGER.info(self.__formatResultSeparator())
