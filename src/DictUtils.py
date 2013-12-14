@@ -62,9 +62,16 @@ class DictUtils:
             return type(data)(map(DictUtils.convert, data))
         else:
             return data
+    
+    @staticmethod
+    def __quote_plus(val, doEncoding=True):
+        if doEncoding:
+            urllib.quote_plus(str(val))
+        else:
+            return val
 
     @staticmethod
-    def __recursiveUrlencode(parentPath, key, val):
+    def __recursiveUrlencode(parentPath, key, val, doEncoding=True):
         # print "parentPath: " + str(parentPath) + ", key: " + str(key) + ", val: " + str(val)
         if None == key or 0 == len(key):
             return []
@@ -75,7 +82,7 @@ class DictUtils:
         if None == val:
             return [(path, "")]
         if DictUtils.__isPrimitive(val):
-            return [(path, urllib.quote_plus(str(val)))]
+            return [(path, DictUtils.__quote_plus(str(val), doEncoding))]
         
         encodedParams = []
         if list == type(val):
@@ -85,7 +92,7 @@ class DictUtils:
                 if None == item:
                     encodedParams += [(indexedPath, "")]
                 elif DictUtils.__isPrimitive(item):
-                    encodedParams += [(indexedPath, urllib.quote_plus(str(item)))]
+                    encodedParams += [(indexedPath, DictUtils.__quote_plus(str(item), doEncoding))]
                 elif DictUtils.__isCollection(item):
                     encodedParams += DictUtils.__recursiveUrlencode("", indexedPath, item)
                 index += 1
@@ -95,12 +102,12 @@ class DictUtils:
         return encodedParams
 
     @staticmethod
-    def __recursiveUrlencodeAsList(paramDict):
+    def __recursiveUrlencodeAsList(paramDict, doEncoding=True):
         if None == paramDict or 0 == len(paramDict):
             return []
         urlEncodedParams = []
         for key, val in paramDict.iteritems():
-            encodedParams = DictUtils.__recursiveUrlencode("", key, val)
+            encodedParams = DictUtils.__recursiveUrlencode("", key, val, doEncoding)
             if None == encodedParams or 0 == len(encodedParams):
                 continue
             if 0 < len(encodedParams):
@@ -126,7 +133,7 @@ class DictUtils:
             boundary = ''.join(random.choice(DictUtils._BOUNDARY_CHARS) for i in range(30))
         lines = []
         
-        fields = DictUtils.__recursiveUrlencodeAsList(paramDict)
+        fields = DictUtils.__recursiveUrlencodeAsList(paramDict, doEncoding=False)
         
         if None != fields and 0 < len(fields):
             for name, value in fields:
