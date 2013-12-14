@@ -14,12 +14,13 @@ class TestExecutor(BaseExecutor):
     def __init__(self):
         TestExecutor._LOGGER.debug("created TestExecutor")
         self.__inputRE = re.compile('(\$(IN|OUT)\[([\w]+)\]\[([\w\.]+)\])')
+        self.__fileRE = re.compile('(\$FILE\[(.+)\])')
     
     def __detemplatizeStr(self, inputStr, control):
         if None == inputStr:
             return None
         matches = self.__inputRE.findall(inputStr)
-        TestExecutor._LOGGER.debug("inputStr: " + inputStr + ", matches: " + str(matches))
+        TestExecutor._LOGGER.debug("match IN/OUT inputStr: " + inputStr + ", matches: " + str(matches))
         tInputStr = inputStr
         
         for match in matches:
@@ -59,28 +60,30 @@ class TestExecutor(BaseExecutor):
             TestExecutor._LOGGER.debug("tInputStr: " + str(tInputStr))
         return tInputStr
 
-    def __detemplatizeList(self, inputList, control):
+    def __detemplatizeList(self, inputList, control, boolToStr=False):
         if None == inputList or not control['session']['running']:
             return inputList
         tInputList = list()
         for v in inputList:
-            tInputList.append(self.__detemplatizeAny(v, control))
+            tInputList.append(self.__detemplatizeAny(v, control, boolToStr))
         return tInputList
 
     
-    def __detemplatize(self, inputData, control):
+    def __detemplatize(self, inputData, control, boolToStr=False):
         if None == inputData or not control['session']['running']:
             return inputData
         tInputData = dict()
         for k, v in inputData.iteritems():
-            tInputData[k] = self.__detemplatizeAny(v, control)
+            tInputData[k] = self.__detemplatizeAny(v, control, boolToStr)
         return tInputData
 
-    def __detemplatizeAny(self, v, control):
+    def __detemplatizeAny(self, v, control, boolToStr=False):
         tV = None
         if None != v:
             if str == type(v):
                 tV = self.__detemplatizeStr(v, control)
+            elif bool == type(v) and boolToStr:
+                tV = str(v).lower()
             elif list == type(v):
                 tV = TestExecutor.__detemplatizeList(v, control)
             elif dict == type(v):
@@ -113,6 +116,23 @@ class TestExecutor(BaseExecutor):
         
         control['result']['steps'][sid][statusKey]['count'] += 1
         control['result']['steps'][sid][statusKey]['time'] += timeTaken
+    
+    
+    def __extractFiles(self, inputData):
+        if None == inputData or 0 == len(inputData):
+            return []
+        files = []
+        for key, val in inputData.iteritems():
+            matches = self.__fileRE.findall(val)
+            TestExecutor._LOGGER.debug("match FILE val: " + val + ", matches: " + str(matches))
+            for match in matches:
+                filepath = match[1]
+                files.append((key, {'filepath':filepath}))
+        if 0 < len(files):
+            for key, val in files:
+                inputData.pop(key, None)
+                TestExecutor._LOGGER.debug("removed FILE from inputData field: " + key)
+        return files
         
     
     def _execute(self, default, step, control):
@@ -146,20 +166,29 @@ class TestExecutor(BaseExecutor):
             inputData.update(commonInputData)
         
         if None != inputData:
-            inputData = self.__detemplatize(inputData, control)
-            # data = urllib.urlencode(inputData)
-            data = DictUtils.recursiveUrlencode(inputData)
+            inputData = self.__detemplatize(inputData, control, boolToStr=True)
+            # data = DictUtils.recursiveUrlencode(inputData)
         else:
-            data = ""
+            inputData = dict()
         
-        TestExecutor._LOGGER.debug("request data: " + str(data))
+        TestExecutor._LOGGER.debug("request inputData: " + str(inputData))
         
         startTime = time.time()
         
         try:
             if 'POST' == method:
-                res = urllib2.urlopen(url, data)
+                #res = urllib2.urlopen(url, data)
+                files = self.__extractFiles(inputData)
+                data, headers = DictUtils.encode_multipart(inputData, files)
+                if None == files or 0 == len(files):
+                    TestExecutor._LOGGER.debug("request data: " + str(data))
+                else:
+                    TestExecutor._LOGGER.debug("request data: SOME POST DATA with files (won't log)")
+                req = urllib2.Request(url, data=data, headers=headers)
+                res = urllib2.urlopen(req)
             else:
+                data = DictUtils.recursiveUrlencode(inputData)
+                TestExecutor._LOGGER.debug("request data: " + data)
                 url += "?" + data
                 res = urllib2.urlopen(url)
         except IOError, e:

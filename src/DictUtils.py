@@ -1,4 +1,9 @@
+import base64
 import collections
+import mimetypes
+import os
+import random
+import string
 import urllib
 
 
@@ -60,7 +65,7 @@ class DictUtils:
 
     @staticmethod
     def __recursiveUrlencode(parentPath, key, val):
-        #print "parentPath: " + str(parentPath) + ", key: " + str(key) + ", val: " + str(val)
+        # print "parentPath: " + str(parentPath) + ", key: " + str(key) + ", val: " + str(val)
         if None == key or 0 == len(key):
             return []
         if None != parentPath and 0 != len(parentPath):
@@ -90,9 +95,9 @@ class DictUtils:
         return encodedParams
 
     @staticmethod
-    def recursiveUrlencode(paramDict):
+    def __recursiveUrlencodeAsList(paramDict):
         if None == paramDict or 0 == len(paramDict):
-            return ""
+            return []
         urlEncodedParams = []
         for key, val in paramDict.iteritems():
             encodedParams = DictUtils.__recursiveUrlencode("", key, val)
@@ -100,14 +105,80 @@ class DictUtils:
                 continue
             if 0 < len(encodedParams):
                 urlEncodedParams += encodedParams
+        return urlEncodedParams
+
+    @staticmethod
+    def recursiveUrlencode(paramDict):
+        urlEncodedParams = DictUtils.__recursiveUrlencodeAsList(paramDict)
         return "&".join(map(lambda u: "=".join(u), urlEncodedParams))
+    
+    _BOUNDARY_CHARS = string.digits + string.ascii_letters
+    
+    # Inspired by
+    # source: http://code.activestate.com/recipes/578668-encode-multipart-form-data-for-uploading-files-via/
+    
+    @staticmethod
+    def encode_multipart(paramDict, files, boundary=None):
+        def escape_quote(s):
+            return s.replace('"', '\\"')
+    
+        if boundary is None:
+            boundary = ''.join(random.choice(DictUtils._BOUNDARY_CHARS) for i in range(30))
+        lines = []
+        
+        fields = DictUtils.__recursiveUrlencodeAsList(paramDict)
+        
+        if None != fields and 0 < len(fields):
+            for name, value in fields:
+                lines.extend((
+                    '--{0}'.format(boundary),
+                    'Content-Disposition: form-data; name="{0}"'.format(escape_quote(name)),
+                    '',
+                    str(value),
+                ))
+        if None != files and 0 < len(files):
+            for name, value in files:
+                filepath = value['filepath']
+                filename = os.path.split(filepath)[1]
+                if 'mimetype' in value:
+                    mimetype = value['mimetype']
+                else:
+                    mimetype = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+                if 'content' in value:
+                    content = value['content']
+                else:
+                    content = ''
+                    with open(filepath, "rb") as inputFile:
+                        #content = base64.b64encode(inputFile.read())
+                        content = inputFile.read()
+                lines.extend((
+                    '--{0}'.format(boundary),
+                    'Content-Disposition: form-data; name="{0}"; filename="{1}"'.format(
+                            escape_quote(name), escape_quote(filename)),
+                    'Content-Type: {0}'.format(mimetype),
+                    '',
+                    content,
+                ))
+    
+        lines.extend((
+            '--{0}--'.format(boundary),
+            '',
+        ))
+        body = '\r\n'.join(lines)
+    
+        headers = {
+            'Content-Type': 'multipart/form-data; boundary={0}'.format(boundary),
+            'Content-Length': str(len(body)),
+        }
+    
+        return (body, headers)    
 
 
 #--------------------------------
 # [test code]
 #--------------------------------
-#print "=================================="
-#d = {"user" : { "name" : "UJJAWAL", "address" : [ {"city" : "BLR", "phone" : [ ["111", "222"], ["333", "444"]]}, {"city" : "ALD", "phone" : ["555", "666"]}]}}
-#print "d: " + str(d)
-#print "urlencoded: " + DictUtils.recursiveUrlencode(d)
-#print "=================================="
+# print "=================================="
+# d = {"user" : { "name" : "UJJAWAL", "address" : [ {"city" : "BLR", "phone" : [ ["111", "222"], ["333", "444"]]}, {"city" : "ALD", "phone" : ["555", "666"]}]}}
+# print "d: " + str(d)
+# print "urlencoded: " + DictUtils.recursiveUrlencode(d)
+# print "=================================="
