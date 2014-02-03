@@ -66,7 +66,7 @@ class DictUtils:
     @staticmethod
     def __quote_plus(val, doEncoding=True):
         if doEncoding:
-            urllib.quote_plus(str(val))
+            return urllib.quote_plus(str(val))
         else:
             return val
 
